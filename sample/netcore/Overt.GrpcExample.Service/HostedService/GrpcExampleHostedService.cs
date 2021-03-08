@@ -27,9 +27,15 @@ namespace Overt.GrpcExample.Service
         {
             return Task.Factory.StartNew(() =>
             {
-                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase));
+                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase),(options)=> {
+                    options.GenServiceId = (s, end) =>
+                    {
+                        return $"{s}:{end.Host}:{end.Port}.01";
+                    };
+                });
             }, cancellationToken);
         }
+
 
         public Task StopAsync(CancellationToken cancellationToken)
         {

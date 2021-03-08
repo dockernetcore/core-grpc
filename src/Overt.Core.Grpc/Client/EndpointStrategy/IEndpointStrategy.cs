@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using System;
 using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
@@ -26,7 +27,7 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        ServerCallInvoker GetCallInvoker(string serviceName);
+        ServerCallInvoker GetCallInvoker(string serviceName, Func<List<ServerCallInvoker>, ServerCallInvoker> function);
 
         /// <summary>
         /// 移除

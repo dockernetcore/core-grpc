@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -25,6 +26,11 @@ namespace Overt.Core.Grpc
             {
                 return _clientCache.GetOrAdd(typeof(T), key => _factory.Get());
             }
+        }
+
+        public T CreateClient(Func<List<ServerCallInvoker>, ServerCallInvoker> action)
+        {
+            return _factory.Get(action: action);
         }
     }
 }
