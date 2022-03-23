@@ -27,6 +27,11 @@ namespace Overt.Core.Grpc.H2
         public string Scheme { get; set; }
 
         /// <summary>
+        /// 标签，默认"" 获取所有标签的
+        /// </summary>
+        public string Tag { set; get; } = "";
+
+        /// <summary>
         /// 配置GrpcChannelOptions 
         /// 手动配置优先
         /// </summary>

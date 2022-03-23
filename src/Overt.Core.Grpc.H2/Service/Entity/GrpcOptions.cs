@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Overt.Core.Grpc.H2
@@ -23,5 +24,10 @@ namespace Overt.Core.Grpc.H2
         /// ServiceId生成
         /// </summary>
         public Func<string, DnsEndPoint, string> GenServiceId { get; set; }
+
+        /// <summary>
+        /// 注册到Consul的Tags
+        /// </summary>
+        public List<string> Tags { set; get; }
     }
 }

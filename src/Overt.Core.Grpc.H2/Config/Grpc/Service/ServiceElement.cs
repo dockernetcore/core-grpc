@@ -1,4 +1,6 @@
-﻿namespace Overt.Core.Grpc.H2
+﻿using System.Collections.Generic;
+
+namespace Overt.Core.Grpc.H2
 {
     public class ServiceElement
     {

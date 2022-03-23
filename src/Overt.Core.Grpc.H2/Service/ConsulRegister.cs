@@ -1,5 +1,6 @@
 ﻿using Consul;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Timers;
@@ -15,6 +16,8 @@ namespace Overt.Core.Grpc.H2
         private readonly object _locker = new object();
         private readonly Timer _selfCheckTimer;
         private readonly Func<string, DnsEndPoint, string> _genServiceId;
+        private readonly List<string> _tags;
+
 
         /// <summary>
         /// 构造函数
@@ -26,6 +29,26 @@ namespace Overt.Core.Grpc.H2
                 throw new ArgumentNullException($"consul address");
 
             _genServiceId = genServiceId ?? GenServiceId;
+            _client = new ConsulClient((cfg) =>
+            {
+                var uriBuilder = new UriBuilder(address);
+                cfg.Address = uriBuilder.Uri;
+            });
+
+            _selfCheckTimer = new Timer(ConsulTimespan.SelfCheckInterval.TotalSeconds * 1000);
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="address"></param>
+        public ConsulRegister(string address, GrpcOptions grpcOptions)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+                throw new ArgumentNullException($"consul address");
+
+            _genServiceId = grpcOptions?.GenServiceId ?? GenServiceId;
+            _tags = grpcOptions?.Tags;
             _client = new ConsulClient((cfg) =>
             {
                 var uriBuilder = new UriBuilder(address);
@@ -193,7 +216,8 @@ namespace Overt.Core.Grpc.H2
                 Name = serviceName,
                 Address = dnsEndPoint.Host,
                 Port = dnsEndPoint.Port,
-                Check = acr
+                Check = acr,
+                Tags = _tags?.ToArray()
             };
 
             var res = _client.Agent.ServiceRegister(asr).Result;
@@ -233,7 +257,7 @@ namespace Overt.Core.Grpc.H2
 
             try
             {
-                var response = _client.Health.Service(serviceName, "", true).Result;
+                var response = _client.Health.Service(serviceName,"", true).Result;
                 var servcieId = _genServiceId(serviceName, dnsEndPoint);
                 var serviceEntry = response?.Response?.FirstOrDefault(oo => oo?.Service?.ID == servcieId);
                 if (serviceEntry == null)

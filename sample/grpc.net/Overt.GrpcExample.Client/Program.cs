@@ -41,6 +41,7 @@ namespace Overt.GrpcExample.Client
                 {
                     ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
                 };
+                cfg.Tag = "test";
                 cfg.GrpcChannelOptions = new GrpcChannelOptions()
                 {
                     HttpClient = new HttpClient(httpClientHandler),

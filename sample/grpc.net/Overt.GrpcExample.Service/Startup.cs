@@ -42,7 +42,10 @@ namespace Overt.GrpcExample.Service
                 });
             });
 
-            app.UseGrpcRegister();
+            app.UseGrpcRegister(ops=>
+            {
+                ops.Tags = new List<string>() { "test", "test2" };
+            });
         }
     }
 }

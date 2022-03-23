@@ -47,7 +47,7 @@ namespace Overt.Core.Grpc.H2
             var targets = new List<(string, string)>();
             try
             {
-                var r = _client.Health.Service(Options.ServiceName, "", true).Result;
+                var r = _client.Health.Service(Options.ServiceName,Options.Tag, true).Result;
                 if (r.StatusCode != HttpStatusCode.OK)
                     throw new ApplicationException($"failed to query consul server");
 
