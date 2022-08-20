@@ -67,8 +67,8 @@ namespace Overt.Core.Grpc.H2
         /// <param name="serviceId"></param>
         public void Deregister(string serviceId)
         {
-            _client?.Agent?.ServiceDeregister(serviceId).GetAwaiter().GetResult();
             StopSelfCheck();
+            _client?.Agent?.ServiceDeregister(serviceId).GetAwaiter().GetResult();
         }
         #endregion
 
