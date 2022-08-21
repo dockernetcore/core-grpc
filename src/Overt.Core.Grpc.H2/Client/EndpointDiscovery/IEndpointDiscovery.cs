@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -14,14 +15,9 @@ namespace Overt.Core.Grpc.H2
         GrpcClientOptions Options { get; set; }
 
         /// <summary>
-        /// 监听变动的方法
-        /// </summary>
-        Action Watched { get; set; }
-
-        /// <summary>
         /// 获取服务可连接终结点
         /// </summary>
         /// <returns></returns>
-        List<(string serviceId, string target)> FindServiceEndpoints(bool filterBlack = true);
+        Task<List<AddressWrapper>> FindServiceEndpointsAsync(bool filterBlack = true);
     }
 }

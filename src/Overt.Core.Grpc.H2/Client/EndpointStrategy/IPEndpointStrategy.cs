@@ -13,32 +13,16 @@ namespace Overt.Core.Grpc.H2
     {
         #region Constructor
         private readonly object _lock = new object();
-        private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
         private readonly ConcurrentDictionary<string, List<ChannelWrapper>> _channelWrappers = new ConcurrentDictionary<string, List<ChannelWrapper>>();
 
         IPEndpointStrategy()
         {
-            _timer = new Timer(ClientTimespan.ResetInterval.TotalSeconds * 1000);
-            InitCheckTimer();
         }
         #endregion
 
         #region Destructor
-        ~IPEndpointStrategy()
-        {
-            _timer?.Stop();
-            _timer?.Dispose();
-
-            foreach (var item in _channelWrappers)
-            {
-                item.Value?.ForEach(channel =>
-                {
-                    channel.ShutdownAsync();
-                });
-            }
-            _channelWrappers.Clear();
-        }
+      
         #endregion
 
         #region Instance

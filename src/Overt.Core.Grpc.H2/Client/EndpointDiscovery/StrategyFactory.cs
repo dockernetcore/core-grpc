@@ -9,7 +9,7 @@ namespace Overt.Core.Grpc.H2
     /// <summary>
     /// Endpoint 策略工厂
     /// </summary>
-    internal class StrategyFactory
+    internal class StrategyFactory 
     {
         private readonly static object _lockHelper = new object();
         private readonly static ConcurrentDictionary<Type, Exitus> _exitusMap = new ConcurrentDictionary<Type, Exitus>();
@@ -23,13 +23,13 @@ namespace Overt.Core.Grpc.H2
         public static Exitus Get<T>(GrpcClientOptions options) where T : ClientBase
         {
             if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
-                exitus?.EndpointStrategy != null)
+                exitus?.EndpointDiscovery != null)
                 return exitus;
 
             lock (_lockHelper)
             {
                 if (_exitusMap.TryGetValue(typeof(T), out exitus) &&
-                    exitus?.EndpointStrategy != null)
+                    exitus?.EndpointDiscovery != null)
                     return exitus;
 
                 exitus = ResolveConfiguration(options);
@@ -49,17 +49,15 @@ namespace Overt.Core.Grpc.H2
             var service = ResolveServiceConfiguration(options.ConfigPath);
             if(string.IsNullOrWhiteSpace(options.ServiceName))
                 options.ServiceName = service.Name;
-            if (string.IsNullOrWhiteSpace(options.Scheme))
-                options.Scheme = service.Scheme;
 
             options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
 
-            IEndpointStrategy endpointStrategy;
+            IEndpointDiscovery endpointDiscovery;
             if (EnableConsul(service.Discovery, out string address))
-                endpointStrategy = ResolveStickyConfiguration(address, options);
+                endpointDiscovery = ResolveStickyConfiguration(address, options);
             else
-                endpointStrategy = ResolveEndpointConfiguration(service, options);
-            return new Exitus(options.ServiceName, endpointStrategy);
+                endpointDiscovery = ResolveEndpointConfiguration(service, options);
+            return new Exitus(options.ServiceName, endpointDiscovery);
         }
 
         /// <summary>
@@ -82,11 +80,10 @@ namespace Overt.Core.Grpc.H2
         /// <param name="address"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveStickyConfiguration(string address, GrpcClientOptions options)
+        private static IEndpointDiscovery ResolveStickyConfiguration(string address, GrpcClientOptions options)
         {
-            var stickyEndpointDiscovery = new StickyEndpointDiscovery(options, address);
-            EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
-            return EndpointStrategy.Instance;
+            var consulEndpointDiscovery = new ConsulEndpointDiscovery(options, address);
+            return consulEndpointDiscovery;
         }
 
         /// <summary>
@@ -95,12 +92,10 @@ namespace Overt.Core.Grpc.H2
         /// <param name="service"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveEndpointConfiguration(GrpcServiceElement service, GrpcClientOptions options)
+        private static IEndpointDiscovery ResolveEndpointConfiguration(GrpcServiceElement service, GrpcClientOptions options)
         {
             var ipEndPoints = service.Discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
-            var iPEndpointDiscovery = new IPEndpointDiscovery(options, ipEndPoints);
-            EndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
-            return EndpointStrategy.Instance;
+            return new IPEndpointDiscovery(options, ipEndPoints);
         }
 
         /// <summary>

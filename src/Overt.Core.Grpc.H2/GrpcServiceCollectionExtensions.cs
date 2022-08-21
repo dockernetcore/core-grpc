@@ -1,4 +1,6 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
+using Grpc.Net.Client.Balancer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +18,7 @@ namespace Overt.Core.Grpc.H2
     {
         #region 客户端
         /// <summary>
-        /// 
+        /// 添加GrpcClient
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -27,6 +29,22 @@ namespace Overt.Core.Grpc.H2
 
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClient<>), typeof(GrpcClient<>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
+
+            //待测试 是否每一个T 拥有解析器
+            services.Add(ServiceDescriptor.Singleton(typeof(ResolverFactory), typeof(ConsulResolverFactory<>)));
+            return services;
+        }
+
+        /// <summary>
+        /// 添加Consule解析器
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcConsulResolverFactory<T>(this IServiceCollection services) where T : ClientBase
+        {
+
+            services.AddSingleton<ResolverFactory, ConsulResolverFactory<T>>();
             return services;
         }
 

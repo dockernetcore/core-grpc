@@ -21,12 +21,6 @@ namespace Overt.Core.Grpc.H2
         public string ServiceName { get; set; }
 
         /// <summary>
-        /// http / https 
-        /// 手动配置优先
-        /// </summary>
-        public string Scheme { get; set; }
-
-        /// <summary>
         /// 配置GrpcChannelOptions 
         /// 手动配置优先
         /// </summary>

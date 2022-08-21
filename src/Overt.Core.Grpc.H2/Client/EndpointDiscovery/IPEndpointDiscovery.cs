@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Grpc.Net.Client.Balancer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -25,19 +27,18 @@ namespace Overt.Core.Grpc.H2
         #region Public Property
         public GrpcClientOptions Options { get; set; }
 
-        public Action Watched { get; set; }
         #endregion
 
         #region Public Method
-        public List<(string serviceId, string target)> FindServiceEndpoints(bool filterBlack = true)
+        public async Task<List<AddressWrapper>> FindServiceEndpointsAsync(bool filterBlack = true)
         {
             if ((_ipEndPoints?.Count ?? 0) <= 0)
                 throw new ArgumentOutOfRangeException("endpoint not provide");
 
-            var targets = _ipEndPoints.Select(x => ("", $"{x.Item1}:{x.Item2}"))
-                                      .Where(target => !ServiceBlackPolicy.In(Options.ServiceName, target.Item2) || !filterBlack)
+            var targets = _ipEndPoints.Select(x => new AddressWrapper("", new BalancerAddress(x.Item1, x.Item2)))
+                                      .Where(address => !ServiceBlackPolicy.In(Options.ServiceName, address.Target) || !filterBlack)
                                       .ToList();
-            return targets;
+            return await Task.FromResult(targets);
         }
         #endregion
     }

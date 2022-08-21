@@ -12,7 +12,7 @@ namespace Overt.Core.Grpc.H2
         private readonly object _lock = new object();
         private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
-        private readonly ConcurrentDictionary<string, List<ChannelWrapper>> _channelWrappers = new ConcurrentDictionary<string, List<ChannelWrapper>>();
+        //private readonly ConcurrentDictionary<string, List<ChannelWrapper>> _channelWrappers = new ConcurrentDictionary<string, List<ChannelWrapper>>();
 
         EndpointStrategy()
         {
@@ -27,14 +27,14 @@ namespace Overt.Core.Grpc.H2
             _timer?.Stop();
             _timer?.Dispose();
 
-            foreach (var item in _channelWrappers)
-            {
-                item.Value?.ForEach(channel =>
-                {
-                    channel.ShutdownAsync();
-                });
-            }
-            _channelWrappers.Clear();
+            //foreach (var item in _channelWrappers)
+            //{
+            //    item.Value?.ForEach(channel =>
+            //    {
+            //        channel.ShutdownAsync();
+            //    });
+            //}
+            //_channelWrappers.Clear();
         }
         #endregion
 

@@ -14,11 +14,5 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         T Client { get; }
 
-        /// <summary>
-        /// 每次构造一个新的对象
-        /// </summary>
-        /// <param name="getInvoker"></param>
-        /// <returns></returns>
-        T CreateClient(Func<List<ChannelWrapper>, ChannelWrapper> getChannel);
     }
 }

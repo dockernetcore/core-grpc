@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,14 @@ namespace Overt.Core.Grpc.H2
     /// </summary>
     public class GrpcClientFactory<T> : IGrpcClientFactory<T> where T : ClientBase
     {
-        private readonly GrpcClientOptions<T> _options;
+        readonly GrpcClientOptions<T> _options;
+        readonly GrpcChannel _channel;
+
         public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null)
         {
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
+            _channel = BuildChannel();
         }
 
         /// <summary>
@@ -22,22 +26,18 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Get(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
+        public T Get()
         {
-            var exitus = StrategyFactory.Get<T>(_options);
-
-            ChannelWrapper channelWrapper;
-            if (channelWrapperInvoker != null)
-                channelWrapper = channelWrapperInvoker(exitus.EndpointStrategy.GetChannelWrappers(exitus.ServiceName));
-            else
-                channelWrapper = exitus.EndpointStrategy.GetChannelWrapper(exitus.ServiceName);
-
-
-            var client = (T)Activator.CreateInstance(typeof(T), channelWrapper.Channel);
-            return client;
+            return (T)Activator.CreateInstance(typeof(T), _channel);
         }
 
         #region Private Method
+        private GrpcChannel BuildChannel()
+        {
+            return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
+        }
+
+
         /// <summary>
         /// 获取命名空间
         /// </summary>

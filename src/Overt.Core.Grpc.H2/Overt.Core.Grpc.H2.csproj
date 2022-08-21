@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.4</Version>
     <Description>基于grpc.net驱动结合consul实现微服务注册与发现</Description>
@@ -10,14 +10,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Client\EndpointStrategy\IPEndpointStrategy.cs" />
-    <Compile Remove="Client\EndpointStrategy\StickyEndpointStrategy.cs" />
+    <Compile Remove="Client\EndpointStrategy\**" />
+    <Compile Remove="Client\ServicePolicy\**" />
+    <EmbeddedResource Remove="Client\EndpointStrategy\**" />
+    <EmbeddedResource Remove="Client\ServicePolicy\**" />
+    <None Remove="Client\EndpointStrategy\**" />
+    <None Remove="Client\ServicePolicy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Client\ClientGenerate\ChannelWrapper.cs" />
+    <Compile Remove="Client\Resolver\IPollingResolver.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Client\ServicePolicy\ServiceBlackPolicy.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.6.1.1" />
     <PackageReference Include="Google.Protobuf" Version="3.15.6" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.36.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.47.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
