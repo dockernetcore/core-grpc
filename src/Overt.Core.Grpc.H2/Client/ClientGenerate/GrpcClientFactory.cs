@@ -14,12 +14,14 @@ namespace Overt.Core.Grpc.H2
     {
         readonly GrpcClientOptions<T> _options;
         readonly GrpcChannel _channel;
+        readonly T _client;
 
         public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null)
         {
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
             _channel = BuildChannel();
+            _client= (T)Activator.CreateInstance(typeof(T), _channel);
         }
 
         /// <summary>
@@ -29,17 +31,24 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T Get()
         {
-            return (T)Activator.CreateInstance(typeof(T), _channel);
+            if (_client == null)
+            {
+                return (T)Activator.CreateInstance(typeof(T), _channel);
+            }
+            return _client;
         }
 
         #region Private Method
+        /// <summary>
+        /// 构建可重用的GrpcChannel 通道
+        /// </summary>
+        /// <returns></returns>
         private GrpcChannel BuildChannel()
         {
             _options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
             _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig;
             return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
         }
-
 
         /// <summary>
         /// 获取命名空间
