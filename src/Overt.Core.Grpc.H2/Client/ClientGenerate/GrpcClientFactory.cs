@@ -21,11 +21,10 @@ namespace Overt.Core.Grpc.H2
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
             _channel = BuildChannel();
-            _client= (T)Activator.CreateInstance(typeof(T), _channel);
         }
 
         /// <summary>
-        /// 构造实例
+        /// 构造实例 单例即可
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
