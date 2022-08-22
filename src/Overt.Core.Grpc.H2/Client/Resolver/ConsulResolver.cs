@@ -29,11 +29,6 @@ namespace Overt.Core.Grpc.H2
         {
             _loggerFactory = loggerFactory;
             _options= options; 
-            //var serviceName = options?.ServiceName ?? "";
-            //if (serviceName == null || serviceName.Length <= 0)
-            //{
-            //    throw new ArgumentNullException("设置服务地址解析器时,必须设置服务名!");
-            //}
         }
 
         protected override void OnStarted()
