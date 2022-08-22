@@ -28,11 +28,16 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient();
+
+            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
+            {
+                cfg.ServiceName = "OvertGrpcExampleService";
+            });
+
             //需要注意新版本需要注入解析器
             services.AddGrpcConsulResolverFactory<GrpcExampleServiceClient>();
 
-
-            // 第三方配置，启动可用
+            //第三方配置，启动可用
             //services.AddGrpcConfig(config =>
             //{
             //    config.AddApollo(configuration.GetSection("apollo")).AddDefault();

@@ -31,6 +31,35 @@ namespace Overt.Core.Grpc.H2
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile(configPath)
                 .AddEnvironmentVariables();
+          
+            ConfigureDelegate?.Invoke(builder);
+            var configuration = builder.Build();
+            configuration.GetSection(sectionName).Bind(section);
+            return section;
+        }
+
+        /// <summary>
+        /// 获取Server配置对象
+        /// </summary>
+        /// <param name="sectionName">节点名称</param>
+        /// <param name="configPath"></param>
+        /// <returns></returns>
+        public static T BuildClient<T>(string sectionName, string configPath = "") where T : class, new()
+        {
+
+            var section = new T();
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddEnvironmentVariables();
+            if (!string.IsNullOrWhiteSpace(configPath))
+            {
+                var configPathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configPath);
+                if (File.Exists(configPathFile))
+                {
+                    builder.AddJsonFile(configPathFile);
+                }
+                //throw new Exception($"overt: when resolve configpath, configpath file is not exist... [{configPathFile}]");
+            }
             ConfigureDelegate?.Invoke(builder);
             var configuration = builder.Build();
             configuration.GetSection(sectionName).Bind(section);

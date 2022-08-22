@@ -47,13 +47,13 @@ namespace Overt.Core.Grpc.H2
         private static Exitus ResolveConfiguration(GrpcClientOptions options)
         {
             var service = ResolveServiceConfiguration(options.ConfigPath);
-            if(string.IsNullOrWhiteSpace(options.ServiceName))
-                options.ServiceName = service.Name;
+            if (string.IsNullOrWhiteSpace(options.ServiceName))
+                options.ServiceName = service?.Name ?? "";
             if (string.IsNullOrWhiteSpace(options.ServiceName))
                 throw new ArgumentException("ServiceName is null");
 
             IEndpointDiscovery endpointDiscovery;
-            if (EnableConsul(service.Discovery, out string address))
+            if (EnableConsul(service?.Discovery ?? null, out string address))
                 endpointDiscovery = ResolveConsulConfiguration(address, options);
             else
                 endpointDiscovery = ResolveEndpointConfiguration(service, options);
@@ -67,11 +67,8 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         private static GrpcServiceElement ResolveServiceConfiguration(string configFile)
         {
-            var grpcSection = ConfigBuilder.Build<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
-            if (grpcSection == null || grpcSection.Service == null)
-                throw new ArgumentNullException($"service config error");
-
-            return grpcSection.Service;
+            var grpcSection = ConfigBuilder.BuildClient<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
+            return grpcSection?.Service ?? default(GrpcServiceElement);
         }
 
         /// <summary>
@@ -107,13 +104,12 @@ namespace Overt.Core.Grpc.H2
         {
             address = string.Empty;
             var configPath = discovery?.Consul?.Path;
-            if (string.IsNullOrWhiteSpace(configPath))
-                return false;
-
-            if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, discovery.Consul.Path)))
-                throw new Exception($"[{discovery.Consul.Path}] not exist at [{AppDomain.CurrentDomain.BaseDirectory}]");
-
-            var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
+        
+            var consulSection = ConfigBuilder.BuildClient<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
+            if (string.IsNullOrWhiteSpace(consulSection?.Service?.Address) && (discovery?.EndPoints?.Count ?? 0) <= 0)
+            {
+                throw new Exception($"when resolve configpath, configpath file is not exist... [{configPath}] or No service discovery address configured [key ->ConsulServer:Service:Address]");
+            }
             if (string.IsNullOrWhiteSpace(consulSection?.Service?.Address))
                 return false;
 

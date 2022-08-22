@@ -7,7 +7,7 @@ namespace Overt.Core.Grpc.H2
         /// <summary>
         /// 重置服务时间 30s
         /// </summary>
-        public static readonly TimeSpan ResetInterval = TimeSpan.FromSeconds(30);
+        public static readonly TimeSpan ResetInterval = TimeSpan.FromSeconds(20);
 
         /// <summary>
         /// 黑名单时效 2m
