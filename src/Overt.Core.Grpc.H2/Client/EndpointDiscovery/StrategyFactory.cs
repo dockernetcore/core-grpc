@@ -49,6 +49,8 @@ namespace Overt.Core.Grpc.H2
             var service = ResolveServiceConfiguration(options.ConfigPath);
             if(string.IsNullOrWhiteSpace(options.ServiceName))
                 options.ServiceName = service.Name;
+            if (string.IsNullOrWhiteSpace(options.ServiceName))
+                throw new ArgumentException("ServiceName is null");
 
             IEndpointDiscovery endpointDiscovery;
             if (EnableConsul(service.Discovery, out string address))
