@@ -4,15 +4,15 @@
       "Name": "OvertGrpcExample1Service",
       "Scheme": "http", // –≠“È
       "Discovery": {
-        //"Consul": {
-        //  "Path": "dllconfigs/consulsettings.json"
-        //}
-        "EndPoints": [
-          {
-            "Host": "127.0.0.1",
-            "Port": 5001
-          }
-        ]
+        "Consul": {
+          "Path": "dllconfigs/consulsettings.json"
+        }
+        //"EndPoints": [
+        //  {
+        //    "Host": "127.0.0.1",
+        //    "Port": 5001
+        //  }
+        //]
       }
     }
   }

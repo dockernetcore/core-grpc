@@ -21,7 +21,7 @@ namespace Overt.GrpcExample.Service
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseUrls("http://*:5002");
+                    webBuilder.UseStartup<Startup>().UseUrls("http://*:5003");
                 });
     }
 }

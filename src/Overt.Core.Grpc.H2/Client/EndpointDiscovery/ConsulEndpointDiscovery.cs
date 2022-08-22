@@ -36,7 +36,7 @@ namespace Overt.Core.Grpc.H2
         #endregion
 
         #region Public Method
-        public async Task<List<AddressWrapper>> FindServiceEndpointsAsync(bool filterBlack = true)
+        public async Task<List<AddressWrapper>> FindServiceEndpointsAsync()
         {
             if (_client == null)
                 throw new ArgumentNullException("consul client");
@@ -50,7 +50,6 @@ namespace Overt.Core.Grpc.H2
 
                 targets = r.Response
                            .Select(x => new AddressWrapper(x.Service.ID, new BalancerAddress(x.Service.Address, x.Service.Port)))
-                           .Where(item => !ServiceBlackPolicy.In(Options.ServiceName, item.Target) || !filterBlack)
                            .ToList();
             }
             catch

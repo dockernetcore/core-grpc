@@ -4,6 +4,8 @@ using Grpc.Net.Client.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -15,9 +17,11 @@ namespace Overt.Core.Grpc.H2
         readonly GrpcClientOptions<T> _options;
         readonly GrpcChannel _channel;
         readonly T _client;
+        readonly IServiceProvider _serviceProvider;
 
-        public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null)
+        public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
             _channel = BuildChannel();
@@ -46,7 +50,21 @@ namespace Overt.Core.Grpc.H2
         {
             _options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
             _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig;
+            _options.GrpcChannelOptions.ServiceProvider = _serviceProvider;
             return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
+            //return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", new GrpcChannelOptions
+            //{
+            //    Credentials = ChannelCredentials.Insecure,
+            //    HttpHandler = new SocketsHttpHandler
+            //    {
+            //        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
+            //        KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+            //        KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+            //        EnableMultipleHttp2Connections = true
+            //    },
+            //    ServiceConfig = new ServiceConfig { LoadBalancingConfigs = { new LoadBalancingConfig(ClientBalancer.Random) } },
+            //    ServiceProvider = _serviceProvider
+            //});
         }
 
         /// <summary>

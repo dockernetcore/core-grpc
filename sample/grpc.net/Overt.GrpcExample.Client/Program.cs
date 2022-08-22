@@ -1,4 +1,5 @@
 ﻿using Grpc.Net.Client;
+using Grpc.Net.Client.Balancer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Overt.Core.Grpc.H2;
@@ -27,6 +28,9 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient();
+            //需要注意新版本需要注入解析器
+            services.AddGrpcConsulResolverFactory<GrpcExampleServiceClient>();
+
 
             // 第三方配置，启动可用
             //services.AddGrpcConfig(config =>
@@ -37,18 +41,18 @@ namespace Overt.GrpcExample.Client
             // 单服务配置
             services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
             {
-                var httpClientHandler = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                };
-                cfg.GrpcChannelOptions = new GrpcChannelOptions()
-                {
-                    HttpClient = new HttpClient(httpClientHandler),
-                    //HttpHandler = new SocketsHttpHandler()
-                    //{
-                    //    EnableMultipleHttp2Connections = true,
-                    //}
-                };
+                //var httpClientHandler = new HttpClientHandler
+                //{
+                //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                //};
+                //cfg.GrpcChannelOptions = new GrpcChannelOptions()
+                //{
+                //    HttpClient = new HttpClient(httpClientHandler),
+                //    //HttpHandler = new SocketsHttpHandler()
+                //    //{
+                //    //    EnableMultipleHttp2Connections = true,
+                //    //}
+                //};
             });
 
             // 单服务配置
@@ -67,6 +71,7 @@ namespace Overt.GrpcExample.Client
             do
             {
                 var key = Console.ReadKey();
+                
                 if (key.Key == ConsoleKey.A)
                     break;
 

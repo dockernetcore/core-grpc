@@ -52,7 +52,7 @@ namespace Overt.Core.Grpc.H2
 
             IEndpointDiscovery endpointDiscovery;
             if (EnableConsul(service.Discovery, out string address))
-                endpointDiscovery = ResolveStickyConfiguration(address, options);
+                endpointDiscovery = ResolveConsulConfiguration(address, options);
             else
                 endpointDiscovery = ResolveEndpointConfiguration(service, options);
             return new Exitus(options.ServiceName, endpointDiscovery);
@@ -78,7 +78,7 @@ namespace Overt.Core.Grpc.H2
         /// <param name="address"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private static IEndpointDiscovery ResolveStickyConfiguration(string address, GrpcClientOptions options)
+        private static IEndpointDiscovery ResolveConsulConfiguration(string address, GrpcClientOptions options)
         {
             var consulEndpointDiscovery = new ConsulEndpointDiscovery(options, address);
             return consulEndpointDiscovery;

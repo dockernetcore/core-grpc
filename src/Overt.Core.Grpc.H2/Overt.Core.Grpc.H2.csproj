@@ -11,20 +11,13 @@
 
   <ItemGroup>
     <Compile Remove="Client\EndpointStrategy\**" />
-    <Compile Remove="Client\ServicePolicy\**" />
     <EmbeddedResource Remove="Client\EndpointStrategy\**" />
-    <EmbeddedResource Remove="Client\ServicePolicy\**" />
     <None Remove="Client\EndpointStrategy\**" />
-    <None Remove="Client\ServicePolicy\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Client\ClientGenerate\ChannelWrapper.cs" />
     <Compile Remove="Client\Resolver\IPollingResolver.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Client\ServicePolicy\ServiceBlackPolicy.cs" />
   </ItemGroup>
 
   <ItemGroup>

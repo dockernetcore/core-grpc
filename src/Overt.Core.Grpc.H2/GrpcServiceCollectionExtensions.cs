@@ -30,8 +30,7 @@ namespace Overt.Core.Grpc.H2
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClient<>), typeof(GrpcClient<>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
 
-            //待测试 是否每一个T 拥有解析器
-            services.Add(ServiceDescriptor.Singleton(typeof(ResolverFactory), typeof(ConsulResolverFactory<>)));
+            services.AddSingleton<LoadBalancerFactory, RandomBalancerFactory>();
             return services;
         }
 
@@ -43,7 +42,6 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public static IServiceCollection AddGrpcConsulResolverFactory<T>(this IServiceCollection services) where T : ClientBase
         {
-
             services.AddSingleton<ResolverFactory, ConsulResolverFactory<T>>();
             return services;
         }

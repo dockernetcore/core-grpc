@@ -30,13 +30,12 @@ namespace Overt.Core.Grpc.H2
         #endregion
 
         #region Public Method
-        public async Task<List<AddressWrapper>> FindServiceEndpointsAsync(bool filterBlack = true)
+        public async Task<List<AddressWrapper>> FindServiceEndpointsAsync()
         {
             if ((_ipEndPoints?.Count ?? 0) <= 0)
                 throw new ArgumentOutOfRangeException("endpoint not provide");
 
             var targets = _ipEndPoints.Select(x => new AddressWrapper("", new BalancerAddress(x.Item1, x.Item2)))
-                                      .Where(address => !ServiceBlackPolicy.In(Options.ServiceName, address.Target) || !filterBlack)
                                       .ToList();
             return await Task.FromResult(targets);
         }

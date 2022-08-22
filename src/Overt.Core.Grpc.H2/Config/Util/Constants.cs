@@ -1,4 +1,5 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
 using Grpc.Net.Client.Configuration;
 using System;
 using System.Net.Http;
@@ -26,6 +27,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         public static GrpcChannelOptions DefaultChannelOptions = new GrpcChannelOptions()
         {
+            Credentials = ChannelCredentials.Insecure,
             MaxReceiveMessageSize = int.MaxValue,
             MaxSendMessageSize = int.MaxValue,
             HttpHandler = new SocketsHttpHandler
@@ -36,7 +38,7 @@ namespace Overt.Core.Grpc.H2
                 KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
                 EnableMultipleHttp2Connections = true
             },
-            ServiceConfig = DefaultServiceConfig
+            ServiceConfig = DefaultServiceConfig,
         };
 
         public static ServiceConfig DefaultServiceConfig = new ServiceConfig()

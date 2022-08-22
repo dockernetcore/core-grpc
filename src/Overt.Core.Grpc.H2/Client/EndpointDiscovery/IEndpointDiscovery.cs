@@ -18,6 +18,6 @@ namespace Overt.Core.Grpc.H2
         /// 获取服务可连接终结点
         /// </summary>
         /// <returns></returns>
-        Task<List<AddressWrapper>> FindServiceEndpointsAsync(bool filterBlack = true);
+        Task<List<AddressWrapper>> FindServiceEndpointsAsync();
     }
 }

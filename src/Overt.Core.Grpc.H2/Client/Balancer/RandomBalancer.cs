@@ -23,6 +23,10 @@ namespace Overt.Core.Grpc.H2
         {
             private readonly IReadOnlyList<Subchannel> _subchannels;
 
+            /// <summary>
+            /// 不可用的ip节点会自动过滤
+            /// </summary>
+            /// <param name="subchannels"></param>
             public RandomPicker(IReadOnlyList<Subchannel> subchannels)
             {
                 _subchannels = subchannels;
