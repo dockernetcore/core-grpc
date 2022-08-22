@@ -45,7 +45,7 @@ namespace Overt.Core.Grpc.H2
     public class RandomBalancerFactory : LoadBalancerFactory
     {
         // Create a RandomBalancer when the name is 'random'.
-        public override string Name => "random";
+        public override string Name => ClientBalancer.Random;
 
         public override LoadBalancer Create(LoadBalancerOptions options)
         {

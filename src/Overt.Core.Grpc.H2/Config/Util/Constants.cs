@@ -1,4 +1,8 @@
 ﻿using Grpc.Net.Client;
+using Grpc.Net.Client.Configuration;
+using System;
+using System.Net.Http;
+using System.Threading;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -24,6 +28,20 @@ namespace Overt.Core.Grpc.H2
         {
             MaxReceiveMessageSize = int.MaxValue,
             MaxSendMessageSize = int.MaxValue,
+            HttpHandler = new SocketsHttpHandler
+            {
+                PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
+                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
+                EnableMultipleHttp2Connections = true
+            },
+            ServiceConfig = DefaultServiceConfig
+        };
+
+        public static ServiceConfig DefaultServiceConfig = new ServiceConfig()
+        {
+            LoadBalancingConfigs = { new LoadBalancingConfig(ClientBalancer.Random) }
         };
 
     }

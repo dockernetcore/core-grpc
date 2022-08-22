@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
+using Grpc.Net.Client.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ namespace Overt.Core.Grpc.H2
         #region Private Method
         private GrpcChannel BuildChannel()
         {
+            _options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
+            _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig;
             return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
         }
 

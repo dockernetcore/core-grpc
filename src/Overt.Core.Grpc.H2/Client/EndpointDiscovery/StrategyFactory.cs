@@ -50,8 +50,6 @@ namespace Overt.Core.Grpc.H2
             if(string.IsNullOrWhiteSpace(options.ServiceName))
                 options.ServiceName = service.Name;
 
-            options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
-
             IEndpointDiscovery endpointDiscovery;
             if (EnableConsul(service.Discovery, out string address))
                 endpointDiscovery = ResolveStickyConfiguration(address, options);
