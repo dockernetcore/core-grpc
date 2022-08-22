@@ -15,5 +15,10 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <returns></returns>
         T Get();
+
+        /// <summary>
+        /// 预热链接,预热负载均衡数据,避免不预热客户端起来流量太多流量起来比较慢甚至打挂
+        /// </summary>
+        void WarmConnect();
     }
 }

@@ -41,6 +41,14 @@ namespace Overt.Core.Grpc.H2
             return _client;
         }
 
+        /// <summary>
+        /// 预热链接,预热负载均衡数据,避免不预热客户端起来流量太多流量起来比较慢甚至打挂
+        /// </summary>
+        public void WarmConnect()
+        {
+            _channel.ConnectAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter();
+        }
+
         #region Private Method
         /// <summary>
         /// 构建可重用的GrpcChannel 通道
@@ -52,19 +60,6 @@ namespace Overt.Core.Grpc.H2
             _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig;
             _options.GrpcChannelOptions.ServiceProvider = _serviceProvider;
             return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
-            //return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", new GrpcChannelOptions
-            //{
-            //    Credentials = ChannelCredentials.Insecure,
-            //    HttpHandler = new SocketsHttpHandler
-            //    {
-            //        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-            //        KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-            //        KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
-            //        EnableMultipleHttp2Connections = true
-            //    },
-            //    ServiceConfig = new ServiceConfig { LoadBalancingConfigs = { new LoadBalancingConfig(ClientBalancer.Random) } },
-            //    ServiceProvider = _serviceProvider
-            //});
         }
 
         /// <summary>

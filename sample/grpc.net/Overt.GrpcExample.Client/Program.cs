@@ -78,6 +78,11 @@ namespace Overt.GrpcExample.Client
 
                 try
                 {
+                    #region 预热负载均衡
+                    var factory = provider.GetService<IGrpcClientFactory<GrpcExampleServiceClient>>();
+                    factory.WarmConnect();
+                    #endregion
+
                     var service = provider.GetService<IGrpcClient<GrpcExampleServiceClient>>();
                     var res = service.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine(DateTime.Now + " - " + res.Content ?? "abc");
