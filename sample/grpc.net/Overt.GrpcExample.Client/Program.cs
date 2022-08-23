@@ -29,13 +29,14 @@ namespace Overt.GrpcExample.Client
             // 注入GrpcClient
             services.AddGrpcClient();
 
+           
+            //需要注意新版本需要注入解析器
+            services.AddGrpcConsulResolverFactory<GrpcExampleServiceClient>();
+
             services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
             {
                 cfg.ServiceName = "OvertGrpcExampleService";
             });
-
-            //需要注意新版本需要注入解析器
-            services.AddGrpcConsulResolverFactory<GrpcExampleServiceClient>();
 
             //第三方配置，启动可用
             //services.AddGrpcConfig(config =>
