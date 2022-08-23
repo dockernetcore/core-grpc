@@ -12,7 +12,20 @@ namespace Overt.Core.Grpc.H2
     internal class StrategyFactory 
     {
         private readonly static object _lockHelper = new object();
-        private readonly static ConcurrentDictionary<Type, Exitus> _exitusMap = new ConcurrentDictionary<Type, Exitus>();
+        private readonly static ConcurrentDictionary<string, Exitus> _exitusMap = new ConcurrentDictionary<string, Exitus>();
+        private readonly static ConcurrentDictionary<string, GrpcClientOptions> _options = new ConcurrentDictionary<string, GrpcClientOptions>();
+        
+        /// <summary>
+        /// 加入缓存
+        /// </summary>
+        /// <param name="options"></param>
+        public static void AddCache(GrpcClientOptions options)
+        {
+            if (options == null)
+                return;
+
+            _options.AddOrUpdate(options.ServiceName, options, (k, v) => options);
+        }
 
         /// <summary>
         /// 获取EndpointStrategy
@@ -20,20 +33,23 @@ namespace Overt.Core.Grpc.H2
         /// <typeparam name="T"></typeparam>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static Exitus Get<T>(GrpcClientOptions options) where T : ClientBase
+        public static Exitus Get(string serviceName)
         {
-            if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
+            if (_exitusMap.TryGetValue(serviceName, out Exitus exitus) &&
                 exitus?.EndpointDiscovery != null)
                 return exitus;
 
             lock (_lockHelper)
             {
-                if (_exitusMap.TryGetValue(typeof(T), out exitus) &&
+                if (_exitusMap.TryGetValue(serviceName, out exitus) &&
                     exitus?.EndpointDiscovery != null)
                     return exitus;
 
+                if (!_options.TryGetValue(serviceName, out GrpcClientOptions options))
+                    throw new Exception($"配置异常");
+
                 exitus = ResolveConfiguration(options);
-                _exitusMap.AddOrUpdate(typeof(T), exitus, (k, v) => exitus);
+                _exitusMap.AddOrUpdate(serviceName, exitus, (k, v) => exitus);
                 return exitus;
             }
         }
@@ -65,10 +81,25 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        private static GrpcServiceElement ResolveServiceConfiguration(string configFile)
+        public static GrpcServiceElement ResolveServiceConfiguration(string configFile)
         {
             var grpcSection = ConfigBuilder.BuildClient<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
             return grpcSection?.Service ?? default(GrpcServiceElement);
+        }
+
+        public static string ResolveServiceName(string configFile,string serviceName)
+        {
+            if (!string.IsNullOrWhiteSpace(serviceName))
+            {
+                return serviceName;
+            }
+            var consulServiceConfig = ResolveServiceConfiguration(configFile);
+            serviceName = consulServiceConfig?.Name ?? "";
+            if (string.IsNullOrWhiteSpace(serviceName))
+            {
+                throw new ArgumentNullException("service is not null");
+            }
+            return serviceName;
         }
 
         /// <summary>

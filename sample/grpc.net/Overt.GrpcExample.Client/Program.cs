@@ -31,7 +31,7 @@ namespace Overt.GrpcExample.Client
 
            
             //需要注意新版本需要注入解析器
-            services.AddGrpcConsulResolverFactory<GrpcExampleServiceClient>();
+            //services.AddGrpcConsulResolverFactory<GrpcExampleServiceClient>();
 
             services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
             {

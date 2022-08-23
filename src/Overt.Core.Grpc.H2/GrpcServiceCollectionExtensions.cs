@@ -31,20 +31,22 @@ namespace Overt.Core.Grpc.H2
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
 
             services.AddSingleton<LoadBalancerFactory, RandomBalancerFactory>();
+            services.AddSingleton<ResolverFactory, ConsulResolverFactory>();
+
             return services;
         }
 
-        /// <summary>
-        /// 添加Consule解析器
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddGrpcConsulResolverFactory<T>(this IServiceCollection services) where T : ClientBase
-        {
-            services.AddSingleton<ResolverFactory, ConsulResolverFactory<T>>();
-            return services;
-        }
+        ///// <summary>
+        ///// 添加Consule解析器
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="services"></param>
+        ///// <returns></returns>
+        //public static IServiceCollection AddGrpcConsulResolverFactory<T>(this IServiceCollection services) where T : ClientBase
+        //{
+        //    services.AddSingleton<ResolverFactory, ConsulResolverFactory<T>>();
+        //    return services;
+        //}
 
         /// <summary>
         /// 配置 可用于第三方配置

@@ -25,6 +25,7 @@ namespace Overt.Core.Grpc.H2
             _serviceProvider = serviceProvider;
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
+
             _channel = BuildChannel();
         }
 
@@ -63,7 +64,11 @@ namespace Overt.Core.Grpc.H2
             _options.GrpcChannelOptions ??= Constants.DefaultChannelOptions();
             _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig();
             _options.GrpcChannelOptions.ServiceProvider = _serviceProvider;
-            return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
+
+            _options.ServiceName = StrategyFactory.ResolveServiceName(_options.ConfigPath, _options.ServiceName);
+            StrategyFactory.AddCache(_options);
+
+            return GrpcChannel.ForAddress($"consul:///{_options.ServiceName}", _options.GrpcChannelOptions);
         }
 
         /// <summary>
