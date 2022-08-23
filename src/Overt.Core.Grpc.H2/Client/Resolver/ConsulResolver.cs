@@ -64,69 +64,6 @@ namespace Overt.Core.Grpc.H2
                 var addresses = endPoints.Select(s => s.Address).ToArray();
                 Listener(ResolverResult.ForResult(addresses));
             }
-
-            //if (IsDifference(endPoints))
-            //{
-            //    var addresses = endPoints.Select(s => s.Address).ToArray();
-            //    Listener(ResolverResult.ForResult(addresses));
-
-            //    Reset(endPoints);//重置缓存
-            //}
         }
-
-        #region 私有方法
-        ///// <summary>
-        ///// 获得当前缓存的节点信息
-        ///// </summary>
-        ///// <returns></returns>
-        //private List<AddressWrapper> Get()
-        //{
-        //    try
-        //    {
-        //        _currentAddressWrapper.TryGetValue(_options.ServiceName, out List<AddressWrapper> value);
-        //        return value;
-        //    }
-        //    catch
-        //    {
-        //        return default(List<AddressWrapper>);
-        //    }
-        //}
-
-        //private void Reset(List<AddressWrapper> list)
-        //{
-        //    try
-        //    {
-        //        _currentAddressWrapper.TryRemove(_options.ServiceName, out _);
-        //        _currentAddressWrapper.TryAdd(_options.ServiceName, list);
-        //    }
-        //    catch
-        //    {
-
-        //    }
-        //}
-
-        //private bool IsDifference(List<AddressWrapper> wrappers)
-        //{
-        //    try
-        //    {
-        //        var currentValues = Get();
-        //        var count = currentValues?.Count ?? 0;
-        //        var wrappersCount = wrappers?.Count ?? 0;
-        //        if (count <= 0)
-        //        {
-        //            return true;
-        //        }
-        //        if (count != wrappersCount)
-        //        {
-        //            return true;
-        //        }
-        //        return !currentValues.All(b => wrappers.Any(a => a.Target.Equals(b.Target)));
-        //    }
-        //    catch
-        //    {
-        //        return true;
-        //    }
-        //}
-        #endregion
     }
 }
