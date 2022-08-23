@@ -16,8 +16,9 @@ namespace Overt.Core.Grpc.H2
     {
         readonly GrpcClientOptions<T> _options;
         readonly GrpcChannel _channel;
-        readonly T _client;
         readonly IServiceProvider _serviceProvider;
+        T _client;
+
 
         public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options, IServiceProvider serviceProvider)
         {
@@ -43,7 +44,7 @@ namespace Overt.Core.Grpc.H2
         }
 
         /// <summary>
-        /// 预热链接,预热负载均衡数据,避免不预热客户端起来流量太多流量起来比较慢甚至打挂
+        /// 预热链接,预热负载均衡数据,避免不预热客户端起来流量太大Consul 服务发现还在处理导致慢
         /// </summary>
         public void WarmConnect()
         {
