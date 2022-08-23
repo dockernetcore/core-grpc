@@ -23,9 +23,13 @@
     <None Update="dllconfigs\Overt.GrpcExample1.Service.Grpc.dll.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="dllconfigs\Overt.GrpcExample.Service.Grpc1.dll.json">
+    <None Update="dllconfigs\Overt.GrpcExample.Service.Grpc.dll.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

@@ -58,8 +58,8 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         private GrpcChannel BuildChannel()
         {
-            _options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
-            _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig;
+            _options.GrpcChannelOptions ??= Constants.DefaultChannelOptions();
+            _options.GrpcChannelOptions.ServiceConfig ??= Constants.DefaultServiceConfig();
             _options.GrpcChannelOptions.ServiceProvider = _serviceProvider;
             return GrpcChannel.ForAddress($"{typeof(T).Name}:///localhost", _options.GrpcChannelOptions);
         }

@@ -42,7 +42,7 @@ namespace Overt.Core.Grpc.H2
         {
             try
             {
-                Refresh();
+                //Refresh();
             }
             catch (Exception ex)
             {

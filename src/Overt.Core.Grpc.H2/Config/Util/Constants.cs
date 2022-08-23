@@ -22,29 +22,58 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         internal const string GrpcClientSectionName = "GrpcClient";
 
+        ///// <summary>
+        ///// 默认的通道配置
+        ///// </summary>
+        //public static GrpcChannelOptions DefaultChannelOptions = new GrpcChannelOptions()
+        //{
+        //    Credentials = ChannelCredentials.Insecure,
+        //    MaxReceiveMessageSize = int.MaxValue,
+        //    MaxSendMessageSize = int.MaxValue,
+        //    HttpHandler = new SocketsHttpHandler
+        //    {
+        //        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
+        //        KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+        //        KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+        //        KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
+        //        EnableMultipleHttp2Connections = true
+        //    },
+        //    ServiceConfig = DefaultServiceConfig,
+        //};
+
+        //public static ServiceConfig DefaultServiceConfig = new ServiceConfig()
+        //{
+        //    LoadBalancingConfigs = { new LoadBalancingConfig(ClientBalancer.Random) }
+        //};
+
         /// <summary>
         /// 默认的通道配置
         /// </summary>
-        public static GrpcChannelOptions DefaultChannelOptions = new GrpcChannelOptions()
+        public static GrpcChannelOptions DefaultChannelOptions()
         {
-            Credentials = ChannelCredentials.Insecure,
-            MaxReceiveMessageSize = int.MaxValue,
-            MaxSendMessageSize = int.MaxValue,
-            HttpHandler = new SocketsHttpHandler
+            return new GrpcChannelOptions()
             {
-                PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-                KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
-                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
-                EnableMultipleHttp2Connections = true
-            },
-            ServiceConfig = DefaultServiceConfig,
-        };
+                Credentials = ChannelCredentials.Insecure,
+                MaxReceiveMessageSize = int.MaxValue,
+                MaxSendMessageSize = int.MaxValue,
+                HttpHandler = new SocketsHttpHandler
+                {
+                    PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
+                    KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                    KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+                    KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
+                    EnableMultipleHttp2Connections = true
+                },
+                ServiceConfig = DefaultServiceConfig(),
+            };
+        }
 
-        public static ServiceConfig DefaultServiceConfig = new ServiceConfig()
+        public static ServiceConfig DefaultServiceConfig()
         {
-            LoadBalancingConfigs = { new LoadBalancingConfig(ClientBalancer.Random) }
-        };
-
+            return new ServiceConfig()
+            {
+                LoadBalancingConfigs = { new LoadBalancingConfig(ClientBalancer.Random) }
+            };
+        }
     }
 }
