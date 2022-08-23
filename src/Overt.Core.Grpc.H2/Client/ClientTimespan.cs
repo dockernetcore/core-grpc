@@ -5,9 +5,9 @@ namespace Overt.Core.Grpc.H2
     internal static class ClientTimespan
     {
         /// <summary>
-        /// 重置服务时间 20s
+        /// 重置服务时间 15s
         /// </summary>
-        public static readonly TimeSpan ResetInterval = TimeSpan.FromSeconds(20);
+        public static readonly TimeSpan ResetInterval = TimeSpan.FromSeconds(15);
 
         /// <summary>
         /// 黑名单时效 2m

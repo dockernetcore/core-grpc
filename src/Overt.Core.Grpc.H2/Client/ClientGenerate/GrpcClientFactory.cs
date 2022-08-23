@@ -26,7 +26,6 @@ namespace Overt.Core.Grpc.H2
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
             _channel = BuildChannel();
-            _client = (T)Activator.CreateInstance(typeof(T), _channel);
         }
 
         /// <summary>
@@ -34,13 +33,16 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Get()
+        public T Client
         {
-            if (_client == null)
+            get
             {
-                return (T)Activator.CreateInstance(typeof(T), _channel);
+                if (_client == null)
+                {
+                    return (T)Activator.CreateInstance(typeof(T), _channel);
+                }
+                return _client;
             }
-            return _client;
         }
 
         /// <summary>

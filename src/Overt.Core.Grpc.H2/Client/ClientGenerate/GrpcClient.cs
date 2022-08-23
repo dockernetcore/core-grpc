@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Overt.Core.Grpc.H2
 {
     /// <summary>
-    /// GrpcClient管理类
+    /// GrpcClient管理类 主要是向下兼容以前使用的方式
     /// </summary>
     public class GrpcClient<T> : IGrpcClient<T> where T : ClientBase
     {
@@ -22,7 +22,7 @@ namespace Overt.Core.Grpc.H2
         {
             get
             {
-                return _factory.Get();
+                return _factory.Client;
             }
         }
 
