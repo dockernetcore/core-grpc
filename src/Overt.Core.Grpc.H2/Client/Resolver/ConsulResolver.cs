@@ -53,16 +53,28 @@ namespace Overt.Core.Grpc.H2
 
         protected override async Task ResolveAsync(CancellationToken cancellationToken)
         {
-            var serviceName = _address.LocalPath.Replace("/", "");
-            var exitus = StrategyFactory.Get(serviceName);
-            if (exitus?.EndpointDiscovery == null)
-                throw new ArgumentNullException("No Service Discovery Policy Obtained");
-
-            var endPoints = await exitus.EndpointDiscovery.FindServiceEndpointsAsync();
-            if (endPoints != null)
+            try
             {
+                var serviceName = _address.LocalPath.Replace("/", "");
+                var exitus = StrategyFactory.Get(serviceName);
+                if (exitus?.EndpointDiscovery == null)
+                { 
+                    throw new ArgumentNullException("No Service Discovery Policy Obtained");
+                }
+
+                var endPoints = await exitus.EndpointDiscovery.FindServiceEndpointsAsync();
+                if (endPoints == null)
+                {
+                    Listener(ResolverResult.ForResult(null));
+                    return;
+                }
+
                 var addresses = endPoints.Select(s => s.Address).ToArray();
                 Listener(ResolverResult.ForResult(addresses));
+            }
+            catch(Exception ex)
+            {
+                _loggerFactory.CreateLogger("resolver").LogError(ex, $"ResolveAsync serviceName:{_address}");
             }
         }
     }

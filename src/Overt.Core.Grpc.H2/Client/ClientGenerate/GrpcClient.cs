@@ -22,7 +22,7 @@ namespace Overt.Core.Grpc.H2
         {
             get
             {
-                return _factory.Client;
+                return _factory.Get();
             }
         }
 

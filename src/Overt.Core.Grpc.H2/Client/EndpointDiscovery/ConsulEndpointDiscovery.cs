@@ -54,7 +54,7 @@ namespace Overt.Core.Grpc.H2
             }
             catch
             {
-                return null;
+                throw;
             }
             return targets;
         }

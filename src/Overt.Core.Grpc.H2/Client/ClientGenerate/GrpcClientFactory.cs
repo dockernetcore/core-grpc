@@ -34,16 +34,13 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Client
+        public T Get()
         {
-            get
+            if (_client == null)
             {
-                if (_client == null)
-                {
-                    return (T)Activator.CreateInstance(typeof(T), _channel);
-                }
-                return _client;
+                return (T)Activator.CreateInstance(typeof(T), _channel);
             }
+            return _client;
         }
 
         /// <summary>
@@ -66,7 +63,11 @@ namespace Overt.Core.Grpc.H2
             _options.GrpcChannelOptions.ServiceProvider = _serviceProvider;
 
             _options.ServiceName = StrategyFactory.ResolveServiceName(_options.ConfigPath, _options.ServiceName);
+
             StrategyFactory.AddCache(_options);
+            var exitus = StrategyFactory.Get(_options.ServiceName);
+            if (exitus?.EndpointDiscovery == null)
+                throw new ArgumentNullException("No Service Discovery Policy Obtained");
 
             return GrpcChannel.ForAddress($"consul:///{_options.ServiceName}", _options.GrpcChannelOptions);
         }
