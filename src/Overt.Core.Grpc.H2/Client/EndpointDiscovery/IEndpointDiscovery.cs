@@ -14,6 +14,8 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         GrpcClientOptions Options { get; set; }
 
+        Action Watched { get; set; }
+
         /// <summary>
         /// 获取服务可连接终结点
         /// </summary>

@@ -27,11 +27,16 @@ namespace Overt.Core.Grpc.H2
             });
 
             Options = options;
+
+            //开启监听
+            StartWatchService();
         }
         #endregion
 
         #region Public Property
         public GrpcClientOptions Options { get; set; }
+
+        public Action Watched { get; set; }
 
         #endregion
 
@@ -59,5 +64,42 @@ namespace Overt.Core.Grpc.H2
             return targets;
         }
         #endregion
+
+        /// <summary>
+        /// 开始监听服务变动
+        /// </summary>
+        private void StartWatchService()
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                ulong lastWaitIndex = 0;
+                do
+                {
+                    try
+                    {
+                        var serviceQueryResult = await _client.Catalog.Service(Options.ServiceName, "", new QueryOptions()
+                        {
+                            WaitTime = TimeSpan.FromSeconds(30),
+                            WaitIndex = lastWaitIndex
+                        });
+                        var waitIndex = serviceQueryResult.LastIndex;
+                        if (lastWaitIndex <= 0)
+                        {
+                            lastWaitIndex = waitIndex;
+                            continue;
+                        }
+                        if (waitIndex == lastWaitIndex)
+                            continue;
+
+                        // 重置服务
+                        lastWaitIndex = waitIndex;
+                        if (Watched != null)
+                            Watched.Invoke();
+                    }
+                    catch { }
+
+                } while (true);
+            });
+        }
     }
 }

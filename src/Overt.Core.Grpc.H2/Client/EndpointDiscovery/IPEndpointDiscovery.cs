@@ -27,6 +27,8 @@ namespace Overt.Core.Grpc.H2
         #region Public Property
         public GrpcClientOptions Options { get; set; }
 
+        public Action Watched { get; set; }
+
         #endregion
 
         #region Public Method

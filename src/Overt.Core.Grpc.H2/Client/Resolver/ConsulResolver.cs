@@ -28,7 +28,19 @@ namespace Overt.Core.Grpc.H2
             : base(loggerFactory)
         {
             _loggerFactory = loggerFactory;
-            _address = address; 
+            _address = address;
+
+            #region 添加监听回调
+            var serviceName = _address.LocalPath.Replace("/", "");
+            var exitus = StrategyFactory.Get(serviceName);
+            if (exitus == null)
+                throw new Exception($"{serviceName} 配置异常");
+
+            exitus.EndpointDiscovery.Watched = () =>
+            {
+                Refresh();
+            };
+            #endregion
         }
 
         protected override void OnStarted()
