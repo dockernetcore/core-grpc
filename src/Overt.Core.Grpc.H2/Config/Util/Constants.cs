@@ -2,6 +2,7 @@
 using Grpc.Net.Client;
 using Grpc.Net.Client.Configuration;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 
@@ -62,7 +63,10 @@ namespace Overt.Core.Grpc.H2
                     KeepAlivePingDelay = TimeSpan.FromSeconds(30),
                     KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
                     KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
-                    EnableMultipleHttp2Connections = true
+                    EnableMultipleHttp2Connections = true,
+#if NET6_0
+                    ActivityHeadersPropagator = DistributedContextPropagator.CreateNoOutputPropagator()
+#endif
                 },
                 ServiceConfig = DefaultServiceConfig(),
             };
